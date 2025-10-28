@@ -1,5 +1,6 @@
 #include <iostream>
 #include <Windows.h>
+#include <vector>
 
 using namespace std;
 
@@ -35,8 +36,29 @@ int main() {
         delete[] arr;
         return 1;
     }
-   
-    return 0;
+
+    InitializeCriticalSection(&cs);
+
+    HANDLE start_event = CreateEvent(
+        NULL,               // Атрибуты безопасности по умолчанию
+        TRUE,               // Ручной сброс (manual-reset)
+        FALSE,              // Изначально несигнальное состояние
+        NULL                // Имя не нужно
+    );
+
+    vector<HANDLE> stop_events(num_threads);
+    vector<HANDLE> terminate_events(num_threads);
+    vector<HANDLE> continue_events(num_threads);
+
+    for (int i = 0; i < num_threads; i++) {
+        stop_events[i] = CreateEvent(NULL, FALSE, FALSE, NULL);      
+        terminate_events[i] = CreateEvent(NULL, FALSE, FALSE, NULL); 
+        continue_events[i] = CreateEvent(NULL, FALSE, FALSE, NULL);  
+    }
+
+    vector<HANDLE> threads(num_threads);
+    vector<ThreadData> thread_data(num_threads);
+   return 0;
 }
 DWORD WINAPI marker_thread(LPVOID param) {
    
