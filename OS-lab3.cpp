@@ -85,10 +85,43 @@ int main() {
 
     cout << "Launching all streams..." << endl;
     SetEvent(start_event);
+
    return 0;
 }
 DWORD WINAPI marker_thread(LPVOID param) {
-   
+    ThreadData* data = (ThreadData*)param;
+    int marks_count = 0;
+    int last_index = -1;
+
+    WaitForSingleObject(data->start_event, INFINITE);
+
+    srand(data->thread_id);
+
+    while (true) {
+        int index = rand() % data->array_size;
+        last_index = index;
+
+        EnterCriticalSection(&cs);
+
+        if (arr[index] == 0) {
+            Sleep(5);
+            arr[index] = data->thread_id;
+            marks_count++;
+            Sleep(5);
+            LeaveCriticalSection(&cs);
+        }
+        else {
+            LeaveCriticalSection(&cs);
+            break;
+        }
+    }
+
+    cout << "Thread " << data->thread_id << " stopped. "
+        << "Number of marks:: " << marks_count << ", "
+        << "Lock index: " << last_index << endl;
+
+    SetEvent(data->stop_event);
+
     return 0;
 }
 
