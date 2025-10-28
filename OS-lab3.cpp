@@ -147,6 +147,21 @@ int main() {
         }
     }
     
+    cout << "All threads terminated. Releasing resources..." << endl;
+
+    DeleteCriticalSection(&cs);
+    CloseHandle(start_event);
+
+    for (int i = 0; i < num_threads; i++) {
+        CloseHandle(threads[i]);
+        CloseHandle(stop_events[i]);
+        CloseHandle(terminate_events[i]);
+        CloseHandle(continue_events[i]);
+    }
+
+    delete[] arr;
+
+    cout << "The program is completed." << endl;
    return 0;
 }
 DWORD WINAPI marker_thread(LPVOID param) {
@@ -181,6 +196,61 @@ DWORD WINAPI marker_thread(LPVOID param) {
         << "Lock index: " << last_index << endl;
 
     SetEvent(data->stop_event);
+
+    HANDLE wait_events[2] = { data->terminate_event, data->continue_event };
+    DWORD result = WaitForMultipleObjects(2, wait_events, FALSE, INFINITE);
+
+    if (result == WAIT_OBJECT_0) {
+        EnterCriticalSection(&cs);
+
+        int cleared_count = 0;
+        for (int i = 0; i < data->array_size; i++) {
+            if (arr[i] == data->thread_id) {
+                arr[i] = 0;
+                cleared_count++;
+            }
+        }
+
+        LeaveCriticalSection(&cs);
+
+        cout << "Thread " << data->thread_id << " stopped. "
+            << "cleared " << cleared_count << " marks." << endl;
+    }
+    else if (result == WAIT_OBJECT_0 + 1) {
+        cout << "Thread " << data->thread_id << " continue work." << endl;
+
+        marks_count = 0;
+        goto restart;
+    }
+restart:
+    
+    marks_count = 0;
+    while (true) {
+        int index = rand() % data->array_size;
+        last_index = index;
+
+        EnterCriticalSection(&cs);
+
+        if (arr[index] == 0) {
+            Sleep(5);
+            arr[index] = data->thread_id;
+            marks_count++;
+            Sleep(5);
+            LeaveCriticalSection(&cs);
+        }
+        else {
+            LeaveCriticalSection(&cs);
+            break;
+        }
+    }
+
+    cout << "Thread " << data->thread_id << " stopped. "
+        << "Number of marks: " << marks_count << ", "
+        << "Lock index: " << last_index << endl;
+
+    SetEvent(data->stop_event);
+
+    result = WaitForMultipleObjects(2, wait_events, FALSE, INFINITE);
 
     return 0;
 }
