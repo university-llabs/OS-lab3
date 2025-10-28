@@ -58,6 +58,33 @@ int main() {
 
     vector<HANDLE> threads(num_threads);
     vector<ThreadData> thread_data(num_threads);
+
+    for (int i = 0; i < num_threads; i++) {
+        thread_data[i] = {
+            i + 1,
+            array_size,
+            start_event,
+            stop_events[i],
+            terminate_events[i],
+            continue_events[i]
+        };
+
+        threads[i] = CreateThread(
+            NULL,
+            0,
+            marker_thread,
+            &thread_data[i],
+            0,
+            NULL
+        );
+
+        if (threads[i] == NULL) {
+            cout << "Error creating thread " << i + 1 << endl;
+        }
+    }
+
+    cout << "Launching all streams..." << endl;
+    SetEvent(start_event);
    return 0;
 }
 DWORD WINAPI marker_thread(LPVOID param) {
