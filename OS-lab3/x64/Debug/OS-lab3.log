@@ -1,0 +1,19 @@
+﻿  OS-lab3.cpp
+C:\MyLEARNING\OS\task-OS\OS-lab3\OS-lab3.cpp(23,5): error C2872: 'array': ambiguous symbol
+  C:\MyLEARNING\OS\task-OS\OS-lab3\OS-lab3.cpp(6,6):
+  could be 'int *array'
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\utility(147,7):
+  or       'std::array'
+  
+C:\MyLEARNING\OS\task-OS\OS-lab3\OS-lab3.cpp(25,17): error C2872: 'array': ambiguous symbol
+  C:\MyLEARNING\OS\task-OS\OS-lab3\OS-lab3.cpp(6,6):
+  could be 'int *array'
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\utility(147,7):
+  or       'std::array'
+  
+C:\MyLEARNING\OS\task-OS\OS-lab3\OS-lab3.cpp(35,18): error C2872: 'array': ambiguous symbol
+  C:\MyLEARNING\OS\task-OS\OS-lab3\OS-lab3.cpp(6,6):
+  could be 'int *array'
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\utility(147,7):
+  or       'std::array'
+  
